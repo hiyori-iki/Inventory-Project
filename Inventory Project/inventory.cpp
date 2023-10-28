@@ -3,9 +3,9 @@
 #include <string>
 
 enum class ItemType { Food, Craft, Weapon, Armour };
-enum class Rarity { Common, Rare, Legendary };
+enum class Rarity { Common, Rare, Legendary }; 
 
-struct InventoryItem {
+struct InventoryItem { 
     std::string name;
     ItemType type;
     Rarity rarity;
@@ -20,31 +20,35 @@ public:
     std::vector<InventoryItem> inventory;
     std::vector<InventoryItem> equipped;
 
-    void addItem(const std::string& name, ItemType type, Rarity rarity, int quantity) {
+    void addItem(const std::string& name, ItemType type, Rarity rarity, int quantity)  /*For adding the items in the datastructure
+                                                                                          representing the collection of items*/
+    {      
         inventory.push_back(InventoryItem(name, type, rarity, quantity));
     }
 
-    void displayInventory() {
-        // Display inventory items
+    void displayInventory()            //For displaying Inventory items
+    {
         for (size_t i = 0; i < inventory.size(); ++i) {
             displayItem(inventory[i]);
         }
         std::cout <<"Inventory Size: " << inventory.size()<<"\n";
     }
 
-    void displayEquipped() {
-        // Display equipped items
+    void displayEquipped()             //For displaying Equipped items
+    {
         for (size_t i = 0; i < equipped.size(); ++i) {
             displayItem(equipped[i]);
         }
     }
 
-    void displayItem(const InventoryItem& item) {
+    void displayItem(const InventoryItem& item)             /*To get the information of an item for 
+                                                            the displayInventory() and displayEquipped() functions*/
+    { 
         std::cout << item.name << " (" << getRarityString(item.rarity) << ")"
             << " - " << item.quantity << "x\n";
     }
 
-    void equipItem()
+    void equipItem()                         //To equip items from inventory
     {
         int itemIndex;
         std::cout << "Enter the index of the item you want to equip:";
@@ -52,12 +56,12 @@ public:
         if (itemIndex >= 1 && static_cast<size_t>(itemIndex) <= inventory.size()) {
             
             int indexOfItem = doesExist(inventory[itemIndex - 1].name);
-            if ( indexOfItem!= -1)
+            if ( indexOfItem!= -1)              // if the item already exists we simply have to increase the quantity by one
             {
                 equipped[indexOfItem].quantity++;
                 inventory[itemIndex - 1].quantity--;
             }
-            if ( indexOfItem== -1)
+            if ( indexOfItem== -1)            // if the item doesnt exist we will have to add the item in the equipped vector
             {
                 equipped.push_back(inventory[itemIndex - 1]);
                 equipped[equipped.size() - 1].quantity = 1;
@@ -65,7 +69,8 @@ public:
             }
 
             
-            if (inventory[itemIndex - 1].quantity == 0) {
+            if (inventory[itemIndex - 1].quantity == 0) {      /*If equipping items reduces the item to zero in the inventory 
+                                                               this if statement will have to erase the item from its vector*/
                 inventory.erase(inventory.begin() + itemIndex - 1);
             }
         }
@@ -74,7 +79,7 @@ public:
         }
     }
 
-    void consumeItem()
+    void consumeItem()            //To consume food items from inventory or Equipped items section
     {
         int itemIndex;
         int choice;
@@ -87,16 +92,17 @@ public:
         std::cout << "Enter the index of the food item to consume: ";
         std::cin >> itemIndex;
 
-        if (choice == 1)
+        if (choice == 1)  //to consume from inventory
         {
             if (itemIndex >= 1 && static_cast<size_t>(itemIndex) <= inventory.size()) {
                
-                if (inventory[itemIndex - 1].type == ItemType::Food) {
+                if (inventory[itemIndex - 1].type == ItemType::Food) {       // To check if the item you want to consume is food
                     inventory[itemIndex - 1].quantity--;
 
                    
-                    if (inventory[itemIndex - 1].quantity == 0) {
-                        inventory.erase(inventory.begin() + itemIndex - 1);
+                    if (inventory[itemIndex - 1].quantity == 0) {              /*If consumption reduces the quantity to 0 we will have to
+                                                                                  remove the item from inventory*/
+                        inventory.erase(inventory.begin() + itemIndex - 1);    
                     }
                 }
                 else {
@@ -107,7 +113,7 @@ public:
                 std::cout << "Invalid item index. Please try again.\n";
             }
         }
-        if (choice == 2)
+        if (choice == 2)   //To consume from Equipped items
         {
             if (itemIndex >= 1 && static_cast<size_t>(itemIndex) <= equipped.size()) {
                 
@@ -129,7 +135,7 @@ public:
         }
     }
 
-    void dropItem()
+    void dropItem()          //To reduce or drop item from inventory or equipped items section
     {
         int itemIndex;
         int choice;
@@ -142,7 +148,7 @@ public:
         std::cin >> itemIndex;
         
 
-        if ( choice==1) {
+        if ( choice==1) {         // to drop items from inventory
             if (itemIndex >= 1 && static_cast<size_t>(itemIndex) <= inventory.size())
             {
                 inventory[itemIndex - 1].quantity--;
@@ -155,7 +161,7 @@ public:
                 std::cout << "Invalid item index. Please try again.\n";
             }
         }
-        if (choice == 2)
+        if (choice == 2)     //to drop items from equipped items
         {
             if (itemIndex >= 1 && static_cast<size_t>(itemIndex) <= equipped.size())
             {
@@ -172,7 +178,9 @@ public:
       
     }
 
-    std::string getRarityString(Rarity rarity) {
+    std::string getRarityString(Rarity rarity) /*This function is to handle the rarity enumeration values
+                                                 Common, Rare, and Legendary */
+    {
         switch (rarity) {
         case Rarity::Common: return "Common";
         case Rarity::Rare: return "Rare";
@@ -181,7 +189,8 @@ public:
         return "Unknown";
     }
 
-    int doesExist(std::string item)
+    int doesExist(std::string item)        /* To check if the same item already exists in the equipped section
+                                             if the item exists it will return the index of them equipped item*/
     {
         for (int i = 0; i < equipped.size(); ++i)
         {
